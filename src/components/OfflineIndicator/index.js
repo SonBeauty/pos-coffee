@@ -12,7 +12,7 @@ export default function OfflineIndicator({ isOnline }) {
           isOnline ? "bg-green-500" : "bg-red-500"
         }`}
       ></span>
-      {isOnline ? "Hệ thống Trực tuyến" : "Đang Ngoại tuyến (Offline)"}
+      {isOnline ? "online" : "Offline"}
     </div>
   );
 }

@@ -1,13 +1,12 @@
 // pages/index.js
 "use client";
 import { useState, useEffect } from "react";
-import Head from "next/head";
-import CategoryList from "../components/CategoryList";
-import ProductCard from "../components/ProductCard";
-import CartItem from "../components/CardItem";
-import OfflineIndicator from "../components/OfflineIndicator";
-import { db } from "../lib/indexedDB"; // IndexedDB instance
+import CategoryList from "@/components/CategoryList";
+import CartItem from "@/components/CardItem";
+import { db } from "@/lib/indexedDB"; // IndexedDB instance
 import { sendInvoiceToServer } from "../lib/api"; // API to backend
+import Image from "next/image";
+import Header from "@/components/Header";
 
 const categories = [
   { id: "coffee", name: "Coffee" },
@@ -18,17 +17,17 @@ const categories = [
 
 const products = {
   coffee: [
-    { id: "c1", name: "Espresso", price: 3.5, img: "/images/espresso.png" },
-    { id: "c2", name: "Latte", price: 5.1, img: "/images/latte.png" },
-    { id: "c3", name: "Cold Brew", price: 5.5, img: "/images/coldbrew.png" },
+    { id: "c1", name: "Espresso", price: 3.5, img: "/images/espresso.jpg" },
+    { id: "c2", name: "Latte", price: 5.1, img: "/images/latte.jpg" },
+    { id: "c3", name: "Cold Brew", price: 5.5, img: "/images/coldbrew.jpg" },
   ],
   tea: [
-    { id: "t1", name: "Black Tea", price: 4.0, img: "/images/blacktea.png" },
-    { id: "t2", name: "Green Tea", price: 4.0, img: "/images/greentea.png" },
+    { id: "t1", name: "Black Tea", price: 4.0, img: "/images/blacktea.jpg" },
+    { id: "t2", name: "Green Tea", price: 4.0, img: "/images/greentea.jpg" },
   ],
   pastries: [
-    { id: "p1", name: "Croissant", price: 3.0, img: "/images/croissant.png" },
-    { id: "p2", name: "Muffin", price: 3.2, img: "/images/muffin.png" },
+    { id: "p1", name: "Croissant", price: 3.0, img: "/images/croissant.jpg" },
+    { id: "p2", name: "Muffin", price: 3.2, img: "/images/muffin.jpg" },
   ],
   snacks: [{ id: "s1", name: "Cookie", price: 2.5, img: "/images/cookie.png" }],
 };
@@ -165,22 +164,8 @@ export default function Home() {
 
   return (
     <div className="h-screen flex flex-col bg-gray-50 font-sans text-gray-900 overflow-hidden">
-      <Head>
-        <title>Cafe POS - Hệ thống tính tiền</title>
-      </Head>
-
       {/* Top Header */}
-      <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
-            C
-          </div>
-          <h1 className="text-xl font-black tracking-tight text-gray-800">
-            CAFE NEXUS POS
-          </h1>
-        </div>
-        <OfflineIndicator isOnline={isOnline} />
-      </header>
+      <Header isOnline={isOnline} />
 
       {/* Main Body */}
       <main className="flex flex-1 overflow-hidden">
@@ -195,15 +180,20 @@ export default function Home() {
 
         {/* Center: Products Grid */}
         <section className="flex-1 p-6 overflow-y-auto bg-white">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {products[selectedCategory]?.map((product) => (
               <div
                 key={product.id}
                 onClick={() => addToCart(product)}
                 className="bg-gray-50 rounded-2xl p-4 border border-transparent hover:border-orange-300 hover:bg-orange-50 transition-all cursor-pointer group"
               >
-                <div className="w-full h-32 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-400 group-hover:scale-105 transition-transform">
-                  <span className="text-sm">Hình ảnh</span>
+                <div className="w-full h-48 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-400 group-hover:scale-105 transition-transform relative">
+                  <Image
+                    src={product.img}
+                    alt={product.name}
+                    fill
+                    className="object-cover rounded"
+                  />
                 </div>
                 <h3 className="font-bold text-gray-800 leading-tight">
                   {product.name}
