@@ -36,6 +36,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("coffee");
   const [cart, setCart] = useState([]); // { product, quantity, notes }
   const [isOnline, setIsOnline] = useState(true);
+  const [showCart, setShowCart] = useState(true);
 
   // --- Đồng bộ Offline ---
   useEffect(() => {
@@ -162,10 +163,18 @@ export default function Home() {
     }
   };
 
+  const handleShowCart = () => {
+    setShowCart(!showCart);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-gray-50 font-sans text-gray-900 overflow-hidden">
       {/* Top Header */}
-      <Header isOnline={isOnline} />
+      <Header
+        isOnline={isOnline}
+        showCart={showCart}
+        onShowCart={handleShowCart}
+      />
 
       {/* Main Body */}
       <main className="flex flex-1 overflow-hidden">
@@ -180,7 +189,7 @@ export default function Home() {
 
         {/* Center: Products Grid */}
         <section className="flex-1 p-6 overflow-y-auto bg-white">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {products[selectedCategory]?.map((product) => (
               <div
                 key={product.id}
@@ -207,54 +216,56 @@ export default function Home() {
         </section>
 
         {/* Right Sidebar: Cart */}
-        <aside className="w-96 shrink-0 bg-gray-100 border-l border-gray-200 flex flex-col p-6 shadow-2xl">
-          <h2 className="text-xl font-black mb-6 flex items-center gap-2">
-            GIỎ HÀNG{" "}
-            <span className="text-xs bg-gray-300 px-2 py-1 rounded-full">
-              {cart.length}
-            </span>
-          </h2>
+        {showCart && (
+          <aside className="w-96 shrink-0 bg-gray-100 border-l border-gray-200 flex flex-col p-6 shadow-2xl">
+            <h2 className="text-xl font-black mb-6 flex items-center gap-2">
+              GIỎ HÀNG{" "}
+              <span className="text-xs bg-gray-300 px-2 py-1 rounded-full">
+                {cart.length}
+              </span>
+            </h2>
 
-          <div className="flex-1 overflow-y-auto pr-2 space-y-1">
-            {cart.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-50">
-                <p className="text-lg">Chưa có món nào</p>
+            <div className="flex-1 overflow-y-auto pr-2 space-y-1">
+              {cart.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-50">
+                  <p className="text-lg">Chưa có món nào</p>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <CartItem
+                    key={item.product.id}
+                    item={item}
+                    onUpdateQuantity={updateCartItemQuantity}
+                    onUpdateNotes={updateCartItemNotes}
+                  />
+                ))
+              )}
+            </div>
+
+            <div className="mt-6 pt-6 border-t-2 border-dashed border-gray-300">
+              <div className="flex justify-between text-gray-600 mb-2 font-medium">
+                <span>Tạm tính</span>
+                <span>${calculateSubtotal().toFixed(2)}</span>
               </div>
-            ) : (
-              cart.map((item) => (
-                <CartItem
-                  key={item.product.id}
-                  item={item}
-                  onUpdateQuantity={updateCartItemQuantity}
-                  onUpdateNotes={updateCartItemNotes}
-                />
-              ))
-            )}
-          </div>
+              <div className="flex justify-between text-2xl font-black text-gray-900 mb-6">
+                <span>TỔNG CỘNG</span>
+                <span>${calculateSubtotal().toFixed(2)}</span>
+              </div>
 
-          <div className="mt-6 pt-6 border-t-2 border-dashed border-gray-300">
-            <div className="flex justify-between text-gray-600 mb-2 font-medium">
-              <span>Tạm tính</span>
-              <span>${calculateSubtotal().toFixed(2)}</span>
+              <button
+                onClick={handleCheckout}
+                disabled={cart.length === 0}
+                className={`w-full py-4 rounded-2xl font-bold text-xl shadow-xl transition-all ${
+                  cart.length === 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-orange-600 text-white hover:bg-orange-700 active:scale-95"
+                }`}
+              >
+                XUẤT HÓA ĐƠN
+              </button>
             </div>
-            <div className="flex justify-between text-2xl font-black text-gray-900 mb-6">
-              <span>TỔNG CỘNG</span>
-              <span>${calculateSubtotal().toFixed(2)}</span>
-            </div>
-
-            <button
-              onClick={handleCheckout}
-              disabled={cart.length === 0}
-              className={`w-full py-4 rounded-2xl font-bold text-xl shadow-xl transition-all ${
-                cart.length === 0
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-orange-600 text-white hover:bg-orange-700 active:scale-95"
-              }`}
-            >
-              XUẤT HÓA ĐƠN
-            </button>
-          </div>
-        </aside>
+          </aside>
+        )}
       </main>
     </div>
   );

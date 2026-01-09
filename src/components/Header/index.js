@@ -2,8 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import OfflineIndicator from "@/components/OfflineIndicator";
 
-const Header = ({ isOnline, cart = [] }) => {
-  const [showCart, setShowCart] = useState(false);
+const Header = ({ isOnline, cart = [], onShowCart }) => {
   const [showCategory, setShowCategory] = useState(false);
   return (
     <>
@@ -29,7 +28,7 @@ const Header = ({ isOnline, cart = [] }) => {
           ></button>
 
           {/* Cart */}
-          <button onClick={() => setShowCart(true)} className="relative">
+          <button onClick={onShowCart} className="relative">
             🛒
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs px-2 rounded-full">
